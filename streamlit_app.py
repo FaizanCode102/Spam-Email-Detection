@@ -5,8 +5,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-# Download the 'punkt' resource
+# Download the 'punkt' and 'stopwords' resources
 nltk.download('punkt')
+nltk.download('stopwords')
 
 ps = PorterStemmer()
 
@@ -21,6 +22,12 @@ def transform_text(text):
 
     text = y[:]
     y.clear()
+
+    # Ensure that the stopwords resource is available
+    try:
+        stopwords.words('english')
+    except LookupError:
+        nltk.download('stopwords')
 
     for i in text:
         if i not in stopwords.words('english') and i not in string.punctuation:

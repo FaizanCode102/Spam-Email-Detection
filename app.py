@@ -8,7 +8,6 @@ from nltk.stem import PorterStemmer
 # Download the required NLTK resources
 nltk.download('punkt')
 nltk.download('stopwords')
-
 ps = PorterStemmer()
 
 def transform_text(text):

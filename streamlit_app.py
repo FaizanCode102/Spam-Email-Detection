@@ -5,9 +5,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
-# Download the 'punkt' and 'stopwords' resources
-# nltk.download('punkt')
-nltk.download('punkt_tab')
+# Download the required NLTK resources
+nltk.download('punkt')
 nltk.download('stopwords')
 
 ps = PorterStemmer()
@@ -24,12 +23,6 @@ def transform_text(text):
     text = y[:]
     y.clear()
 
-    # Ensure that the stopwords resource is available
-    try:
-        stopwords.words('english')
-    except LookupError:
-        nltk.download('stopwords')
-
     for i in text:
         if i not in stopwords.words('english') and i not in string.punctuation:
             y.append(i)
@@ -42,22 +35,30 @@ def transform_text(text):
 
     return " ".join(y)
 
-tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
-model = pickle.load(open('model.pkl', 'rb'))
+# Load the saved vectorizer and model using pickle
+try:
+    tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
+    model = pickle.load(open('model.pkl', 'rb'))
+except FileNotFoundError:
+    st.error("Model or vectorizer file not found. Please ensure 'vectorizer.pkl' and 'model.pkl' are in the working directory.")
 
+# Streamlit app layout
 st.title("Spam Email/SMS Detection")
 
 input_sms = st.text_area("Enter the message")
 
 if st.button('Predict'):
-    # 1. preprocess
-    transformed_sms = transform_text(input_sms)
-    # 2. vectorize
-    vector_input = tfidf.transform([transformed_sms])
-    # 3. predict
-    result = model.predict(vector_input)[0]
-    # 4. Display
-    if result == 1:
-        st.header("Spam")
+    if input_sms:
+        # 1. Preprocess the input message
+        transformed_sms = transform_text(input_sms)
+        # 2. Vectorize the transformed text
+        vector_input = tfidf.transform([transformed_sms])
+        # 3. Make the prediction
+        result = model.predict(vector_input)[0]
+        # 4. Display the result
+        if result == 1:
+            st.header("Spam")
+        else:
+            st.header("Not Spam")
     else:
-        st.header("Not Spam")
+        st.warning("Please enter a message to analyze.")

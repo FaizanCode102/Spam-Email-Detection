@@ -6,11 +6,11 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 # Download the 'punkt' and 'stopwords' resources
-nltk.download('punkt')
+# nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 
 ps = PorterStemmer()
-
 
 def transform_text(text):
     text = text.lower()
